@@ -108,12 +108,12 @@ func _build_ui():
 	left_panel.add_child(_ticket_panel)
 	_build_ticket_display()
 
-	# Tray label
+	# Tray labels
 	var tray_header = _make_label("INGREDIENTS", 14, Color("#E74C3C"), true)
 	var th_margin = _wrap_margin(tray_header, 4, 4, 6, 4)
 	left_panel.add_child(th_margin)
 
-	# Ingredient tray scroll
+	# Ingredient tray scrolls
 	var tray_scroll = ScrollContainer.new()
 	tray_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	left_panel.add_child(tray_scroll)
