@@ -83,7 +83,8 @@ func _build_ui():
 
 	# === LEFT: Ticket + tray ===
 	var left_panel = VBoxContainer.new()
-	left_panel.custom_minimum_size = Vector2(260, 0)
+	left_panel.custom_minimum_size = Vector2(300, 0)
+	left_panel.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
 	left_panel.add_theme_constant_override("separation", 0)
 	main_hbox.add_child(left_panel)
 
@@ -93,9 +94,10 @@ func _build_ui():
 	_tab_bar.add_theme_constant_override("separation", 2)
 	left_panel.add_child(_tab_bar)
 
-	# Ticket display panel
+	# Ticket display panel — expand horizontally, fixed min height
 	_ticket_panel = Panel.new()
-	_ticket_panel.custom_minimum_size = Vector2(0, 180)
+	_ticket_panel.custom_minimum_size = Vector2(0, 210)
+	_ticket_panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_ticket_panel.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
 	var tp_style = StyleBoxFlat.new()
 	tp_style.bg_color = Color("#FFFDE7")
@@ -202,16 +204,19 @@ func _build_ticket_display():
 	for child in _ticket_panel.get_children():
 		child.queue_free()
 
-	var vbox = VBoxContainer.new()
-	vbox.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	vbox.add_theme_constant_override("separation", 4)
+	# Panel is NOT a Container, so the MarginContainer must anchor itself to fill it.
 	var m = MarginContainer.new()
+	m.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	m.add_theme_constant_override("margin_left", 10)
 	m.add_theme_constant_override("margin_right", 10)
 	m.add_theme_constant_override("margin_top", 8)
 	m.add_theme_constant_override("margin_bottom", 8)
-	m.add_child(vbox)
 	_ticket_panel.add_child(m)
+
+	# MarginContainer manages its child's size automatically — no preset needed.
+	var vbox = VBoxContainer.new()
+	vbox.add_theme_constant_override("separation", 5)
+	m.add_child(vbox)
 
 	if current_ticket == null:
 		var lbl = _make_label("No active order", 13, Color("#BDC3C7"), false)
@@ -237,13 +242,18 @@ func _build_ticket_display():
 
 func _add_ticket_row(parent: VBoxContainer, key: String, value: String):
 	var row = HBoxContainer.new()
-	row.add_theme_constant_override("separation", 4)
+	row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	row.add_theme_constant_override("separation", 6)
 	parent.add_child(row)
-	var k = _make_label(key + ": ", 11, Color("#7F8C8D"), false)
-	k.custom_minimum_size.x = 80
+
+	var k = _make_label(key, 12, Color("#7F8C8D"), false)
+	k.custom_minimum_size.x = 90
+	k.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
 	row.add_child(k)
-	var v = _make_label(value, 11, Color("#2C3E50"), true)
+
+	var v = _make_label(value, 12, Color("#2C3E50"), true)
 	v.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	# Use horizontal word-wrap only — this works correctly once the parent has real width
 	v.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	row.add_child(v)
 
