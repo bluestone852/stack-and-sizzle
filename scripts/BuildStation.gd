@@ -3,7 +3,7 @@ extends Control
 
 signal sandwich_ready(ticket)
 
-# Ingredient color palette
+# Ingredient color palettes
 const INGREDIENT_COLORS := {
 	# Breads
 	"White Sandwich": Color("#D4A574"),
